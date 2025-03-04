@@ -10,6 +10,13 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'Content-Type',
 }
 
+export async function OPTIONS(request: Request) {
+    return NextResponse.json(null, {
+        status: 200,
+        headers: corsHeaders,
+    })
+}
+
 export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url)
@@ -44,7 +51,7 @@ export async function POST(request: Request) {
     try {
         const body = await postSchema.validate(await request.json())
         const cantante = await prisma.cantante.create({ data: body })
-        return NextResponse.json((cantante), {
+        return NextResponse.json(cantante, {
             status: 201,
             headers: corsHeaders,
         })

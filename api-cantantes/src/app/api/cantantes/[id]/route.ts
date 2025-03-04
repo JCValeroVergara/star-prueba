@@ -16,6 +16,13 @@ const corsHeaders = {
     'Access-Control-Allow-Headers': 'Content-Type',
 };
 
+export async function OPTIONS(request: Request) {
+    return NextResponse.json(null, {
+        status: 200,
+        headers: corsHeaders,
+    });
+}
+
 const getCantante = async (id: number): Promise<Cantante | null> => {
     const cantante = await prisma.cantante.findFirst({ where: { id } });
     return cantante;
@@ -50,7 +57,9 @@ const putSchema = object({
 })
 
 export async function PUT(request: Request, { params }: Segment) {
+
     const { id } = params;
+
     const cantante = await getCantante(+id);
 
     if (!cantante) {
@@ -67,7 +76,7 @@ export async function PUT(request: Request, { params }: Segment) {
             data: body
         });
     
-        return NextResponse.json((updatedCantante), {
+        return NextResponse.json(updatedCantante, {
             status: 200,
             headers: corsHeaders,
         });
