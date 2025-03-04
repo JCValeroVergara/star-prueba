@@ -3,13 +3,18 @@ import { NextResponse, NextRequest } from 'next/server'
 import prisma from '@/lib/prisma';
 import { number, object, string } from 'yup';
 import { Cantante } from '@prisma/client';
-import { cantantes } from '../../seed/data';
 
 interface Segment{
     params: {
         id: string
     }
 }
+
+const corsHeaders = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+};
 
 const getCantante = async (id: number): Promise<Cantante | null> => {
     const cantante = await prisma.cantante.findFirst({ where: { id } });
@@ -28,7 +33,10 @@ export async function GET(request: Request, { params }: Segment) {
         })
     }
 
-    return NextResponse.json( cantante )
+    return NextResponse.json((cantante), {
+        status: 200,
+        headers: corsHeaders,
+    });
 }
 
 
@@ -59,7 +67,10 @@ export async function PUT(request: Request, { params }: Segment) {
             data: body
         });
     
-        return NextResponse.json(updatedCantante);
+        return NextResponse.json((updatedCantante), {
+            status: 200,
+            headers: corsHeaders,
+        });
         
     } catch (error) {
         return NextResponse.json( error, { status: 400 })
@@ -80,7 +91,10 @@ export async function DELETE(request: Request, { params }: Segment) {
 
     try {
         await prisma.cantante.delete({ where: { id: +id } });
-        return NextResponse.json({ message: 'Cantante eliminado' });
+        return NextResponse.json(({ message: 'Cantante eliminado' }), {
+            status: 200,
+            headers: corsHeaders,
+        });
         
     } catch (error) {
         return NextResponse.json( error, { status: 400 })
